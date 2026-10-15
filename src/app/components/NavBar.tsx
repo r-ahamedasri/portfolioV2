@@ -18,6 +18,7 @@ export function NavBar() {
   const [active, setActive] = useState("home");
   const [scrolled, setScrolled] = useState(false);
   const [dark, setDark] = useState(() => document.documentElement.dataset.theme === "dark");
+  const [menuOpen, setMenuOpen] = useState(false);
   const [glide, setGlide] = useState({ x: 0, w: 0, on: false });
   const linksRef = useRef<HTMLElement>(null);
 
@@ -39,6 +40,21 @@ export function NavBar() {
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMenuOpen(false);
+    };
+    const onResize = () => {
+      if (window.innerWidth > 900) setMenuOpen(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    window.addEventListener("resize", onResize);
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+      window.removeEventListener("resize", onResize);
+    };
   }, []);
 
   // the glass highlight slides to the link of the section on screen
@@ -79,14 +95,24 @@ export function NavBar() {
   };
 
   return (
-    <header className={`topbar${scrolled ? " scrolled" : ""}`}>
+    <header className={`topbar${scrolled ? " scrolled" : ""}${menuOpen ? " menu-open" : ""}`}>
       <a className="logo" href="#home" aria-label="Home">{LOGO}<span>.</span></a>
-      <nav aria-label="Main" className="links" ref={linksRef}>
+      <nav id="primary-nav" aria-label="Main" className="links" ref={linksRef}>
         <span className="glide" aria-hidden="true" style={{ transform: `translateX(${glide.x}px)`, width: glide.w, opacity: glide.on ? 1 : 0 }} />
         {NAV_SECTIONS.map((s) => (
-          <a key={s.id} href={`#${s.id}`} className={active === s.id ? "active" : ""} aria-current={active === s.id ? "true" : undefined}>{s.label}</a>
+          <a key={s.id} href={`#${s.id}`} className={active === s.id ? "active" : ""} aria-current={active === s.id ? "true" : undefined} onClick={() => setMenuOpen(false)}>{s.label}</a>
         ))}
       </nav>
+      <button
+        className="menu-toggle"
+        type="button"
+        aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}
+        aria-expanded={menuOpen}
+        aria-controls="primary-nav"
+        onClick={() => setMenuOpen((open) => !open)}
+      >
+        <span className="menu-icon" aria-hidden="true" />
+      </button>
       <button className="mode" aria-label="Toggle dark mode" onClick={toggleTheme}><Icon key={dark ? "sun" : "moon"} n={dark ? "sun" : "moon"} /></button>
     </header>
   );
