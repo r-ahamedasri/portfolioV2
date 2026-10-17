@@ -3,14 +3,23 @@ import { SectionTitle } from "./SectionTitle";
 
 // ---- Edit your journey here (oldest first) ----
 // type: Training, Learning, Project, CTF, Cybersecurity, Experience ...
-const JOURNEY = [
-  { date: "Feb 2025", type: "Training", title: "Certificate in IT and English", desc: "Built a foundation in computing, communication and problem-solving at BCAS Campus." },
-  { date: "Sep 2025", type: "Training", title: "BCAS certificates earned", desc: "Received certificates in Information Technology and English from BCAS Campus." },
-  { date: "Jan 2026", type: "Training", title: "Started BSc (Hons) Computer Science", desc: "Began the University of Westminster degree through IIT and earned the Foundation Certificate in Higher Education." },
-  { date: "Jun 2026", type: "Learning", title: "Python Developer certification", desc: "Completed the freeCodeCamp Python Developer certification." },
-  { date: "Jul 2026", type: "Learning", title: "Git, GitHub and communication skills", desc: "Completed Learning Git and GitHub (LinkedIn Learning) and English Communication Skills for IT (IIT)." },
-  { date: "Date", type: "Cybersecurity", title: "Cisco Networking Academy badges", desc: "Earned badges in cybersecurity, networking and endpoint security. Add dates." },
-  { date: "Date", type: "CTF", title: "CTF participation or achievement", desc: "Add a competition, ranking or room you completed." },
+// `place` is optional and appears opposite the title.
+interface JourneyEvent {
+  date: string;
+  type: string;
+  title: string;
+  desc: string;
+  place?: string;
+}
+
+const JOURNEY: JourneyEvent[] = [
+  { date: "Dec 2024", type: "Education", title: "Completed G.C.E. Advanced Level Examinations", desc: "Completed my G.C.E. Advanced Level studies in the Physical Science stream.", place: "" },
+  { date: "Feb 2025", type: "Education", title: "Certificate in IT and English", desc: "Built a foundation in computing, communication and problem-solving at BCAS Campus.", place: "BCAS Campus" },
+  { date: "Sep 2025", type: "Training", title: "BCAS certificates earned", desc: "Received certificates in Information Technology and English from BCAS Campus.", place: "BCAS Campus" },
+  { date: "Jan 2026", type: "Training", title: "Started BSc (Hons) Computer Science", desc: "Began the University of Westminster degree through IIT and earned the Foundation Certificate in Higher Education.", place: "University of Westminster · IIT" },
+  { date: "Jun 2026", type: "Learning", title: "Python Developer certification", desc: "Completed the freeCodeCamp Python Developer certification.", place: "freeCodeCamp" },
+  { date: "Jul 2026", type: "Learning", title: "Git, GitHub and communication skills", desc: "Completed Learning Git and GitHub (LinkedIn Learning) and English Communication Skills for IT (IIT).", place: "LinkedIn Learning · IIT" },
+  { date: "Date", type: "Cybersecurity", title: "Cisco Networking Academy badges", desc: "Earned badges in cybersecurity, networking and endpoint security. Add dates.", place: "Cisco Networking Academy" },
 ];
 
 // The line stays empty until you scroll past the top of this section. Then it fills as you scroll,
@@ -34,7 +43,7 @@ function Timeline() {
       const lineStart = w.top - s.top;                                   // where the line starts inside the section
       const firstDot = dots[0];
       const firstDotCenter = firstDot
-        ? firstDot.getBoundingClientRect().top - w.top + firstDot.offsetHeight / 2
+        ? firstDot.getBoundingClientRect().top - w.top + firstDot.getBoundingClientRect().height / 2
         : 0;
       const scrolled = Math.max(0, -s.top - 12);                         // scroll past the section top (12px dead zone)
       const range = Math.max(1, lineStart + height - window.innerHeight * 0.75); // scroll needed to fill the whole line
@@ -63,10 +72,17 @@ function Timeline() {
       <span className="jhead" aria-hidden="true" />
       <ol className="journey">
         {JOURNEY.map((j, i) => (
-          <li key={i} className="reveal" style={{ "--d": `${(i % 3) * 0.08}s` } as React.CSSProperties}>
+          <li key={i} className="journey-item">
             <span className="jdate">{j.date}</span>
             <span className="jdot" />
-            <div className="jcard"><span className="pill">{j.type}</span><h3>{j.title}</h3><p>{j.desc}</p></div>
+            <div className="jcard reveal" style={{ "--d": `${(i % 3) * 0.08}s` } as React.CSSProperties}>
+              <span className="pill">{j.type}</span>
+              <div className="jcard-heading">
+                <h3>{j.title}</h3>
+                {j.place && <span className="jplace">{j.place}</span>}
+              </div>
+              <p>{j.desc}</p>
+            </div>
           </li>
         ))}
       </ol>

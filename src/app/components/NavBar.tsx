@@ -47,7 +47,7 @@ export function NavBar() {
       if (event.key === "Escape") setMenuOpen(false);
     };
     const onResize = () => {
-      if (window.innerWidth > 900) setMenuOpen(false);
+      if (window.innerWidth > 760) setMenuOpen(false);
     };
     window.addEventListener("keydown", onKeyDown);
     window.addEventListener("resize", onResize);
@@ -103,17 +103,19 @@ export function NavBar() {
           <a key={s.id} href={`#${s.id}`} className={active === s.id ? "active" : ""} aria-current={active === s.id ? "true" : undefined} onClick={() => setMenuOpen(false)}>{s.label}</a>
         ))}
       </nav>
-      <button
-        className="menu-toggle"
-        type="button"
-        aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}
-        aria-expanded={menuOpen}
-        aria-controls="primary-nav"
-        onClick={() => setMenuOpen((open) => !open)}
-      >
-        <span className="menu-icon" aria-hidden="true" />
-      </button>
-      <button className="mode" aria-label="Toggle dark mode" onClick={toggleTheme}><Icon key={dark ? "sun" : "moon"} n={dark ? "sun" : "moon"} /></button>
+      <div className="nav-actions">
+        <button className="mode" aria-label="Toggle dark mode" onClick={toggleTheme}><Icon key={dark ? "sun" : "moon"} n={dark ? "sun" : "moon"} /></button>
+        <button
+          className="menu-toggle"
+          type="button"
+          aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}
+          aria-expanded={menuOpen}
+          aria-controls="primary-nav"
+          onClick={() => setMenuOpen((open) => !open)}
+        >
+          <span className="menu-icon" aria-hidden="true" />
+        </button>
+      </div>
     </header>
   );
 }

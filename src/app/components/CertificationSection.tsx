@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent, type ReactNode } from "react";
 import { Icon, v } from "./Icon";
 import { SectionTitle } from "./SectionTitle";
 
@@ -40,7 +40,128 @@ const initials = (s: string) => s.split(/\s+/).map((w) => w[0]).join("").slice(0
 // Shows the image, or the fallback when the file is missing.
 function SafeImage({ src, alt, fallback }: { src: string; alt: string; fallback: ReactNode }) {
   const [failed, setFailed] = useState(false);
-  return failed || !src ? <>{fallback}</> : <img src={src} alt={alt} onError={() => setFailed(true)} />;
+  return failed || !src ? <>{fallback}</> : <img src={src} alt={alt} draggable={false} onError={() => setFailed(true)} />;
+}
+
+function BadgeCarousel() {
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const firstGroupRef = useRef<HTMLDivElement>(null);
+  const offsetRef = useRef(0);
+  const loopWidthRef = useRef(0);
+  const dragRef = useRef<{ x: number; offset: number; pointerId: number } | null>(null);
+
+  useEffect(() => {
+    const viewport = viewportRef.current;
+    const track = trackRef.current;
+    const firstGroup = firstGroupRef.current;
+    if (!viewport || !track || !firstGroup) return;
+
+    const wrapOffset = (offset: number) => {
+      const width = loopWidthRef.current;
+      if (!width) return 0;
+      const wrapped = ((offset % width) + width) % width;
+      return wrapped === 0 ? 0 : wrapped - width;
+    };
+    const renderPosition = () => {
+      track.style.transform = `translate3d(${offsetRef.current}px, 0, 0)`;
+    };
+    const measure = () => {
+      loopWidthRef.current = firstGroup.getBoundingClientRect().width;
+      offsetRef.current = wrapOffset(offsetRef.current);
+      renderPosition();
+    };
+
+    let frame = 0;
+    let lastTime = 0;
+    const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const animate = (time: number) => {
+      if (lastTime && !dragRef.current) {
+        const delta = Math.min(time - lastTime, 50);
+        offsetRef.current = wrapOffset(offsetRef.current - delta * 0.042);
+        renderPosition();
+      }
+      lastTime = time;
+      frame = requestAnimationFrame(animate);
+    };
+    const onMotionChange = () => {
+      lastTime = 0;
+      if (motionPreference.matches && frame) {
+        cancelAnimationFrame(frame);
+        frame = 0;
+      } else if (!motionPreference.matches && !frame) {
+        frame = requestAnimationFrame(animate);
+      }
+    };
+
+    const observer = new ResizeObserver(measure);
+    observer.observe(viewport);
+    observer.observe(firstGroup);
+    measure();
+    if (!motionPreference.matches) frame = requestAnimationFrame(animate);
+    motionPreference.addEventListener("change", onMotionChange);
+    return () => {
+      observer.disconnect();
+      motionPreference.removeEventListener("change", onMotionChange);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, []);
+
+  const handlePointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (event.pointerType === "mouse" && event.button !== 0) return;
+    dragRef.current = { x: event.clientX, offset: offsetRef.current, pointerId: event.pointerId };
+    event.currentTarget.setPointerCapture(event.pointerId);
+    event.currentTarget.classList.add("is-dragging");
+  };
+
+  const handlePointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
+    const drag = dragRef.current;
+    const width = loopWidthRef.current;
+    const track = trackRef.current;
+    if (!drag || !width || !track) return;
+    const offset = drag.offset + event.clientX - drag.x;
+    const wrapped = ((offset % width) + width) % width;
+    offsetRef.current = wrapped === 0 ? 0 : wrapped - width;
+    track.style.transform = `translate3d(${offsetRef.current}px, 0, 0)`;
+  };
+
+  const handlePointerUp = (event: ReactPointerEvent<HTMLDivElement>) => {
+    const drag = dragRef.current;
+    if (!drag) return;
+    dragRef.current = null;
+    event.currentTarget.classList.remove("is-dragging");
+    if (event.currentTarget.hasPointerCapture(drag.pointerId)) event.currentTarget.releasePointerCapture(drag.pointerId);
+  };
+
+  return (
+    <div className="badge-carousel">
+      <div
+        className="badge-viewport"
+        ref={viewportRef}
+        role="region"
+        aria-label="Verified skill badges"
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onPointerCancel={handlePointerUp}
+        onLostPointerCapture={handlePointerUp}
+      >
+        <div className="badge-track" ref={trackRef}>
+          {[0, 1].map((copy) => (
+            <div key={copy} className="badge-group" ref={copy === 0 ? firstGroupRef : undefined} aria-hidden={copy === 1}>
+              {BADGES.map((badge) => (
+                <div key={badge.image} className="badge-slide">
+                  <div className="badge-frame">
+                    <SafeImage src={badge.image} alt={badge.name || "Verified badge"} fallback={<Icon n="award" s={34} />} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export function CertificationSection() {
@@ -71,14 +192,7 @@ export function CertificationSection() {
       </div>
       <div className="shelf reveal">
         <h3 className="sub">Badges <span className="muted small">Verified skill badges</span></h3>
-        <div className="hexes">
-          {BADGES.map((b) => (
-            <div key={b.image} className="hexwrap">
-              <div className="hex"><div><SafeImage src={b.image} alt={b.name || "Badge"} fallback={<Icon n="award" s={34} />} /></div></div>
-              {b.name && <span>{b.name}</span>}
-            </div>
-          ))}
-        </div>
+        <BadgeCarousel />
       </div>
     </section>
   );
