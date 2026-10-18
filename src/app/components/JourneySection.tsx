@@ -13,13 +13,11 @@ interface JourneyEvent {
 }
 
 const JOURNEY: JourneyEvent[] = [
-  { date: "Dec 2024", type: "Education", title: "Completed G.C.E. Advanced Level Examinations", desc: "Completed my G.C.E. Advanced Level studies in the Physical Science stream.", place: "" },
-  { date: "Feb 2025", type: "Education", title: "Certificate in IT and English", desc: "Built a foundation in computing, communication and problem-solving at BCAS Campus.", place: "BCAS Campus" },
-  { date: "Sep 2025", type: "Training", title: "BCAS certificates earned", desc: "Received certificates in Information Technology and English from BCAS Campus.", place: "BCAS Campus" },
-  { date: "Jan 2026", type: "Training", title: "Started BSc (Hons) Computer Science", desc: "Began the University of Westminster degree through IIT and earned the Foundation Certificate in Higher Education.", place: "University of Westminster · IIT" },
-  { date: "Jun 2026", type: "Learning", title: "Python Developer certification", desc: "Completed the freeCodeCamp Python Developer certification.", place: "freeCodeCamp" },
-  { date: "Jul 2026", type: "Learning", title: "Git, GitHub and communication skills", desc: "Completed Learning Git and GitHub (LinkedIn Learning) and English Communication Skills for IT (IIT).", place: "LinkedIn Learning · IIT" },
-  { date: "Date", type: "Cybersecurity", title: "Cisco Networking Academy badges", desc: "Earned badges in cybersecurity, networking and endpoint security. Add dates.", place: "Cisco Networking Academy" },
+  { date: "Dec 2024", type: "Education", title: "G.C.E. Advanced Level Studies", desc: "Completed my Advanced Level studies in the Physical Science stream.", place: "Zahira College, Kalmunai" },
+  { date: "Feb 2025", type: "Education", title: "Certificate in Information Technology and English", desc: "Completed certificate courses in Information Technology and English.", place: "BCAS Campus" },
+  { date: "May 2025", type: "Education", title: "Foundation Programme", desc: "Began my foundation studies in preparation for higher education.", place: "Informatics Institute of Technology (IIT)" },
+  { date: "Jan 2026", type: "Education", title: "BSc (Hons) Computer Science", desc: "Started my Computer Science degree awarded by the University of Westminster and delivered through IIT.", place: "Informatics Institute of Technology (IIT)" },
+  { date: "Sep 2026", type: "Cybersecurity", title: "Junior Cybersecurity Analyst", desc: "Earned digital badges in cybersecurity, networking and endpoint security.", place: "Cisco Networking Academy" }
 ];
 
 // The line stays empty until you scroll past the top of this section. Then it fills as you scroll,
