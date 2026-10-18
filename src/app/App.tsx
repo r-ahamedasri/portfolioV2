@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { Analytics } from "@vercel/analytics/react";
 import { ParticleCanvas } from "./components/ParticleCanvas";
 import { CustomCursor } from "./components/CustomCursor";
 import { NavBar } from "./components/NavBar";
@@ -25,6 +26,7 @@ export default function App() {
 
   return (
     <>
+      <Analytics />
       <ParticleCanvas />
       <CustomCursor />
       <NavBar />
