@@ -3,7 +3,7 @@ import { Icon, v } from "./Icon";
 import { SectionTitle } from "./SectionTitle";
 
 // ---- Edit your projects here ----
-// category: used for the filter buttons. image: screenshot in /public (optional).
+// category: used for the filter buttons. image: screenshot in public/projects (e.g. "public/projects/hash-identifier.png" or "/projects/hash-identifier.png").
 // result: "what I learned" text (optional, hidden when empty).
 interface Project {
   title: string;
@@ -27,7 +27,7 @@ const PROJECTS: Project[] = [
     tech: ["Python", "CLI", "Hash Analysis"],
     features: ["Algorithm detection", "Prefix and pattern analysis", "Confidence scoring with ranked results", "Non-hash detection"],
     result: "",
-    image: "",
+    image: "public/cover/hash-identifier.png",
     repo: "https://github.com/r-ahamedasri/hash-identifier",
     demo: "",
   },
@@ -39,7 +39,7 @@ const PROJECTS: Project[] = [
     tech: ["Python", "Google ADK", "Gemini", "AI Agents", "APIs", "Pytest"],
     features: ["Materials and sustainability insights", "Supply chain and carbon footprint analysis", "Repairability and recycling insights", "Multi-agent AI pipeline"],
     result: "",
-    image: "",
+    image: "public/cover/originai.png",
     repo: "https://github.com/r-ahamedasri/originai",
     demo: "",
   },
@@ -51,11 +51,35 @@ const PROJECTS: Project[] = [
     tech: ["Rust", "Encryption", "Cryptography", "CLI"],
     features: ["Nothing is uploaded to a server", "Command-line tool to save, view and manage passwords", "Backup recovery phrase so you are never locked out"],
     result: "",
-    image: "",
+    image: "public/cover/shulkerbox.png",
     repo: "https://github.com/r-ahamedasri/ShulkerBox",
     demo: "",
   },
 ];
+
+function ProjectImage({ src, alt }: { src: string; alt: string }) {
+  const [failed, setFailed] = useState(false);
+  const cleanSrc = src ? src.replace(/^\/?public\//, "/") : "";
+
+  if (!cleanSrc || failed) {
+    return (
+      <div className="mock">
+        <i />
+        <i />
+        <i />
+        <p>Screenshot or demo goes here</p>
+      </div>
+    );
+  }
+
+  return (
+    <img
+      src={cleanSrc.startsWith("/") || cleanSrc.startsWith("http") ? cleanSrc : `/${cleanSrc}`}
+      alt={alt}
+      onError={() => setFailed(true)}
+    />
+  );
+}
 
 export function ProjectsSection() {
   const cats = ["All", ...Array.from(new Set(PROJECTS.map((p) => p.category)))];
@@ -75,7 +99,7 @@ export function ProjectsSection() {
         {shown.map((p, n) => (
           <article key={p.title + cat} className="proj" style={v({ "--n": n, "--g": `var(--g${n % 4})` })}>
             <div className="shot">
-              {p.image ? <img src={p.image} alt={`${p.title} screenshot`} /> : <div className="mock"><i /><i /><i /><p>Screenshot or demo goes here</p></div>}
+              <ProjectImage src={p.image} alt={`${p.title} screenshot`} />
               <span className="pill tl">{p.category}</span><span className="pill tr">{p.status}</span>
             </div>
             <div className="pbody">
