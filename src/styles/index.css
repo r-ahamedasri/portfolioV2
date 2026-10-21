@@ -70,8 +70,8 @@ section { min-height: 100vh; padding: 7rem clamp(1.25rem, 5vw, 4.5rem) 4rem; mar
 .hero-text { display: flex; flex-direction: column; align-items: flex-start; text-align: left; gap: 1.1rem; max-width: 640px; }
 .hero-text > * { animation: rise 0.9s both; } .hero-text > :nth-child(2) { animation-delay: 0.1s; } .hero-text > :nth-child(n+3) { animation-delay: 0.25s; } .hero-text > :nth-child(n+6) { animation-delay: 0.4s; }
 @keyframes rise { from { opacity: 0; transform: translateY(30px); } }
-.availability { display: inline-flex; align-items: center; gap: 0.7rem; padding: 0.55rem 1rem; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--muted); font-size: 0.95rem; font-weight: 600; box-shadow: var(--shadow); }
-.availability i { width: 0.65rem; height: 0.65rem; flex: none; border-radius: 50%; background: #00c46a; box-shadow: 0 0 0 4px rgba(0, 196, 106, 0.12); }
+.availability { display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.28rem 0.75rem; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--muted); font-size: 0.8rem; font-weight: 500; box-shadow: var(--shadow); }
+.availability i { width: 0.45rem; height: 0.45rem; flex: none; border-radius: 50%; background: #00c46a; box-shadow: 0 0 0 3px rgba(0, 196, 106, 0.15); }
 .hi { font-size: 4rem; font-weight: 800; line-height: 1; color: var(--ink); }
 h1.name { max-width: 100%; font-size: 6.25rem; line-height: 0.95; font-weight: 800; letter-spacing: 0.01em; white-space: nowrap; background: linear-gradient(90deg, var(--y), var(--ng), var(--y)); background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: rise 0.9s both, nameShift 6s 1s ease-in-out infinite alternate; }
 :root:not([data-theme="dark"]) h1.name { filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.35)) drop-shadow(0 0 1px rgba(0, 0, 0, 0.3)); }
@@ -218,7 +218,7 @@ h1.name { max-width: 100%; font-size: 6.25rem; line-height: 0.95; font-weight: 8
   .links a.active { background: var(--y); color: #111; }
 }
 @media (max-width: 900px) { .home { grid-template-columns: 1fr; } .portrait { max-width: 300px; order: -1; justify-self: center; } .hi { font-size: 3.25rem; } h1.name { font-size: 4.6rem; } .about { grid-template-columns: 1fr; } .about-photo { position: relative; width: 100%; max-width: 320px; aspect-ratio: 4 / 5; } }
-@media (max-width: 640px) { .hi { font-size: 2.6rem; } h1.name { font-size: 3rem; } .availability { font-size: 0.85rem; padding: 0.45rem 0.85rem; } }
+@media (max-width: 640px) { .hi { font-size: 2.6rem; } h1.name { font-size: 3rem; } .availability { font-size: 0.72rem; padding: 0.22rem 0.65rem; } }
 @media (max-width: 360px) { .hero-text { width: 100%; min-width: 0; } h1.name { font-size: 2.55rem; white-space: normal; } }
 @media (max-width: 900px) {
   .jwrap { --rx: 12px; }

@@ -67,7 +67,6 @@ function ProjectImage({ src, alt }: { src: string; alt: string }) {
         <i />
         <i />
         <i />
-        <p>Screenshot or demo goes here</p>
       </div>
     );
   }
