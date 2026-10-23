@@ -1,6 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./app/App";
+import "lenis/dist/lenis.css";
 import "./styles/index.css";
 
 // apply the saved (or system) theme before the first paint

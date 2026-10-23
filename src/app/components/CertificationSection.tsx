@@ -43,94 +43,86 @@ function SafeImage({ src, alt, fallback }: { src: string; alt: string; fallback:
   return failed || !src ? <>{fallback}</> : <img src={src} alt={alt} draggable={false} onError={() => setFailed(true)} />;
 }
 
+const BADGE_MARQUEE_DURATION = 34; // seconds for a complete loop
+
 function BadgeCarousel() {
   const viewportRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
-  const firstGroupRef = useRef<HTMLDivElement>(null);
-  const offsetRef = useRef(0);
-  const loopWidthRef = useRef(0);
-  const dragRef = useRef<{ x: number; offset: number; pointerId: number } | null>(null);
-
-  useEffect(() => {
-    const viewport = viewportRef.current;
-    const track = trackRef.current;
-    const firstGroup = firstGroupRef.current;
-    if (!viewport || !track || !firstGroup) return;
-
-    const wrapOffset = (offset: number) => {
-      const width = loopWidthRef.current;
-      if (!width) return 0;
-      const wrapped = ((offset % width) + width) % width;
-      return wrapped === 0 ? 0 : wrapped - width;
-    };
-    const renderPosition = () => {
-      track.style.transform = `translate3d(${offsetRef.current}px, 0, 0)`;
-    };
-    const measure = () => {
-      loopWidthRef.current = firstGroup.getBoundingClientRect().width;
-      offsetRef.current = wrapOffset(offsetRef.current);
-      renderPosition();
-    };
-
-    let frame = 0;
-    let lastTime = 0;
-    const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const animate = (time: number) => {
-      if (lastTime && !dragRef.current) {
-        const delta = Math.min(time - lastTime, 50);
-        offsetRef.current = wrapOffset(offsetRef.current - delta * 0.042);
-        renderPosition();
-      }
-      lastTime = time;
-      frame = requestAnimationFrame(animate);
-    };
-    const onMotionChange = () => {
-      lastTime = 0;
-      if (motionPreference.matches && frame) {
-        cancelAnimationFrame(frame);
-        frame = 0;
-      } else if (!motionPreference.matches && !frame) {
-        frame = requestAnimationFrame(animate);
-      }
-    };
-
-    const observer = new ResizeObserver(measure);
-    observer.observe(viewport);
-    observer.observe(firstGroup);
-    measure();
-    if (!motionPreference.matches) frame = requestAnimationFrame(animate);
-    motionPreference.addEventListener("change", onMotionChange);
-    return () => {
-      observer.disconnect();
-      motionPreference.removeEventListener("change", onMotionChange);
-      if (frame) cancelAnimationFrame(frame);
-    };
-  }, []);
+  const dragRef = useRef<{
+    startX: number;
+    initialX: number;
+    pointerId: number;
+    halfWidth: number;
+  } | null>(null);
 
   const handlePointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
     if (event.pointerType === "mouse" && event.button !== 0) return;
-    dragRef.current = { x: event.clientX, offset: offsetRef.current, pointerId: event.pointerId };
+    const track = trackRef.current;
+    if (!track) return;
+
+    // Read current visual translateX from computed transform matrix
+    const computedStyle = window.getComputedStyle(track);
+    const matrix = new DOMMatrixReadOnly(computedStyle.transform);
+    const currentX = matrix.m41 || 0;
+    const halfWidth = track.scrollWidth / 2;
+
+    if (halfWidth <= 0) return;
+
+    // Freeze at exact visual position and switch to interactive drag
+    track.style.animation = "none";
+    track.style.transform = `translate3d(${currentX}px, 0, 0)`;
+
+    dragRef.current = {
+      startX: event.clientX,
+      initialX: currentX,
+      pointerId: event.pointerId,
+      halfWidth,
+    };
+
     event.currentTarget.setPointerCapture(event.pointerId);
     event.currentTarget.classList.add("is-dragging");
   };
 
   const handlePointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
     const drag = dragRef.current;
-    const width = loopWidthRef.current;
     const track = trackRef.current;
-    if (!drag || !width || !track) return;
-    const offset = drag.offset + event.clientX - drag.x;
-    const wrapped = ((offset % width) + width) % width;
-    offsetRef.current = wrapped === 0 ? 0 : wrapped - width;
-    track.style.transform = `translate3d(${offsetRef.current}px, 0, 0)`;
+    if (!drag || !track) return;
+
+    const deltaX = event.clientX - drag.startX;
+    let newX = drag.initialX + deltaX;
+
+    // Wrap around halfWidth seamlessly
+    const halfWidth = drag.halfWidth;
+    newX = ((((newX % halfWidth) - halfWidth) % halfWidth) + halfWidth) % halfWidth - halfWidth;
+
+    track.style.transform = `translate3d(${newX}px, 0, 0)`;
   };
 
   const handlePointerUp = (event: ReactPointerEvent<HTMLDivElement>) => {
     const drag = dragRef.current;
-    if (!drag) return;
+    const track = trackRef.current;
+    if (!drag || !track) return;
+
+    // Calculate current position percentage and resume CSS compositor marquee seamlessly
+    const computedStyle = window.getComputedStyle(track);
+    const matrix = new DOMMatrixReadOnly(computedStyle.transform);
+    const currentX = matrix.m41 || 0;
+    const halfWidth = drag.halfWidth;
+
+    const normalized = (((currentX % halfWidth) + halfWidth) % halfWidth);
+    const progress = (halfWidth - normalized) / halfWidth;
+
     dragRef.current = null;
     event.currentTarget.classList.remove("is-dragging");
-    if (event.currentTarget.hasPointerCapture(drag.pointerId)) event.currentTarget.releasePointerCapture(drag.pointerId);
+    if (event.currentTarget.hasPointerCapture(drag.pointerId)) {
+      event.currentTarget.releasePointerCapture(drag.pointerId);
+    }
+
+    // Resume hardware CSS marquee from exact position
+    track.style.transform = "";
+    track.style.animation = `badgeMarquee ${BADGE_MARQUEE_DURATION}s linear infinite`;
+    track.style.animationDelay = `-${progress * BADGE_MARQUEE_DURATION}s`;
+    track.style.animationPlayState = "running";
   };
 
   return (
@@ -148,10 +140,10 @@ function BadgeCarousel() {
       >
         <div className="badge-track" ref={trackRef}>
           {[0, 1].map((copy) => (
-            <div key={copy} className="badge-group" ref={copy === 0 ? firstGroupRef : undefined} aria-hidden={copy === 1}>
-              {BADGES.map((badge) => (
-                <div key={badge.image} className="badge-slide">
-                  <div className="badge-frame">
+            <div key={copy} className="badge-group" aria-hidden={copy === 1}>
+              {BADGES.map((badge, idx) => (
+                <div key={badge.image + copy + idx} className="badge-slide">
+                  <div className="badge-frame" title={badge.name || "Verified badge"}>
                     <SafeImage src={badge.image} alt={badge.name || "Verified badge"} fallback={<Icon n="award" s={34} />} />
                   </div>
                 </div>

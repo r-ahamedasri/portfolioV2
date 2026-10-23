@@ -101,7 +101,7 @@ const average = (sub: SubCategory) => Math.round(sub.techs.reduce((sum, t) => su
 const SkillCard = ({ sub, i }: { sub: SubCategory; i: number }) => {
   const level = average(sub);
   return (
-    <article className="skcard" style={{ "--d": `${i * 0.07}s` } as CSSProperties}>
+    <article className="skcard reveal" style={{ "--d": `${i * 0.07}s` } as CSSProperties}>
       <div className="sktop"><Ico n="check" /><h4>{sub.name}</h4><b>{level}%</b></div>
       <p className="sktech" title={sub.techs.map((t) => `${t[0]} ${t[1]}%`).join(" · ")}>{sub.techs.map((t) => t[0]).join(" · ")}</p>
       <div className="sbar" role="progressbar" aria-label={sub.name} aria-valuenow={level} aria-valuemin={0} aria-valuemax={100}>

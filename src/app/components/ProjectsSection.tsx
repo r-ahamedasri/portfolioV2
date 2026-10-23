@@ -96,7 +96,7 @@ export function ProjectsSection() {
       </div>
       <div className="projs">
         {shown.map((p, n) => (
-          <article key={p.title + cat} className="proj" style={v({ "--n": n, "--g": `var(--g${n % 4})` })}>
+          <article key={p.title + cat} className="proj reveal" style={v({ "--n": n, "--d": `${(n % 2) * 0.12}s`, "--g": `var(--g${n % 4})` })}>
             <div className="shot">
               <ProjectImage src={p.image} alt={`${p.title} screenshot`} />
               <span className="pill tl">{p.category}</span><span className="pill tr">{p.status}</span>
