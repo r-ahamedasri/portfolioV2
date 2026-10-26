@@ -20,6 +20,10 @@ const P: Record<string, string> = {
   up: "M18 15l-6-6-6 6",
   user: "M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z",
   dl: "M12 3v12m0 0l-4-4m4 4l4-4M4 20h16",
+  shield: "M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10zM9 12l2 2 4-4",
+  terminal: "M4 17l6-6-6-6M12 19h8",
+  network: "M12 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM5 16a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM19 16a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM12 8v4m0 0l-7 4m7-4l7 4",
+  browser: "M3 4h18v16H3zM3 9h18M7 6.5h.01M10 6.5h.01",
 };
 export const Icon = ({ n, s = 22 }: { n: string; s?: number }) => (
   <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={P[n]} /></svg>

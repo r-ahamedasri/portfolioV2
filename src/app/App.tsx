@@ -6,6 +6,7 @@ import { SmoothScroll } from "./components/SmoothScroll";
 import { NavBar } from "./components/NavBar";
 import { HeroSection } from "./components/HeroSection";
 import { AboutSection } from "./components/AboutSection";
+import { WhatIDoSection } from "./components/WhatIDoSection";
 import { SkillsSection } from "./components/SkillsSection";
 import { ProjectsSection } from "./components/ProjectsSection";
 import { JourneySection } from "./components/JourneySection";
@@ -55,6 +56,7 @@ export default function App() {
       <main>
         <HeroSection />
         <AboutSection />
+        <WhatIDoSection />
         <SkillsSection />
         <ProjectsSection />
         <JourneySection />
