@@ -7,7 +7,7 @@ const GREETING = "Hi, I'm";
 const NAME = "Ahamed Asri";
 const INTRO =
   "Computer Science undergraduate at the University of Westminster, passionate about cybersecurity and software development. I build, break, and learn to understand technology and make it better.";
-const PHOTO = "/profile.png"; // transparent PNG in /public
+const PHOTO = "/profile.WebP"; // transparent PNG in /public
 const RESUME = "/AhamedAsri_Resume.pdf"; // file in /public
 
 export function HeroSection() {

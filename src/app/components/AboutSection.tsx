@@ -2,7 +2,7 @@ import { Icon, v } from "./Icon";
 import { SectionTitle } from "./SectionTitle";
 
 // ---- Edit your About Me content here ----
-const PHOTO = "/about.jpg"; // image in /public. Set to "" to show a placeholder.
+const PHOTO = "/about.WebP"; // image in /public. Set to "" to show a placeholder.
 const PARAGRAPHS = [
   "I'm a Computer Science undergraduate with a strong interest in cybersecurity, software development, and emerging technologies. I enjoy exploring how systems work, solving technical problems, and building practical solutions that make a difference. With a growing foundation in programming and security, I'm continuously developing my skills through hands-on projects, technical research, and independent learning.",
 ];
