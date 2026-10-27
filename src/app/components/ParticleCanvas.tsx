@@ -39,7 +39,8 @@ export function ParticleCanvas({
       canvas.height = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight);
       canvas.style.height = `${canvas.height}px`;
       const viewports = Math.max(1, canvas.height / Math.max(window.innerHeight, 1));
-      const actual = Math.ceil(count * viewports);
+      const small = window.innerWidth < 700;
+      const actual = Math.ceil(count * viewports * (small ? 0.35 : 1));
       particlesRef.current = Array.from({ length: actual }, () => ({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,

@@ -16,7 +16,6 @@ const INTERESTS =
 export function AboutSection() {
   return (
     <section id="about">
-      <SectionTitle a="About" b="Me" />
       <div className="about">
         <div className="about-photo reveal">
           {PHOTO
@@ -24,6 +23,7 @@ export function AboutSection() {
             : <div className="photoph"><Icon n="user" s={44} /><p>Your photo here</p><span>public/about.jpg</span></div>}
         </div>
         <div className="about-body">
+          <SectionTitle a="About" b="Me" />
           <div className="reveal">{PARAGRAPHS.map((p, i) => <p key={i}>{p}</p>)}</div>
           <div className="facts">
             <div className="fact reveal">

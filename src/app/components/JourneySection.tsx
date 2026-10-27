@@ -20,15 +20,20 @@ const JOURNEY: JourneyEvent[] = [
   { date: "Sep 2026", type: "Cybersecurity", title: "Junior Cybersecurity Analyst", desc: "Earned digital badges in cybersecurity, networking and endpoint security.", place: "Cisco Networking Academy" }
 ];
 
+// Cards alternate right / left and each dot sits beside its card, so a zig-zag line joins them.
 // The line stays empty until you scroll past the top of this section. Then it fills as you scroll,
 // a ring travels along its tip, and each node lights up when the line reaches it.
 function Timeline() {
   const ref = useRef<HTMLDivElement>(null);
+  const baseRef = useRef<SVGPolylineElement>(null);
+  const fillRef = useRef<SVGPolylineElement>(null);
 
   useEffect(() => {
     const wrap = ref.current;
     const section = wrap?.closest("section");
-    if (!wrap || !section) return;
+    const base = baseRef.current;
+    const fill = fillRef.current;
+    if (!wrap || !section || !base || !fill) return;
     const dots = Array.from(wrap.querySelectorAll<HTMLElement>(".jdot"));
     const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
     let raf = 0;
@@ -37,27 +42,49 @@ function Timeline() {
       raf = 0;
       const s = section.getBoundingClientRect();
       const w = wrap.getBoundingClientRect();
-      const height = w.height;
-      const lineStart = w.top - s.top;                                   // where the line starts inside the section
-      const firstDot = dots[0];
-      const firstDotCenter = firstDot
-        ? firstDot.getBoundingClientRect().top - w.top + firstDot.getBoundingClientRect().height / 2
-        : 0;
+      const pts = dots.map((d) => {
+        const r = d.getBoundingClientRect();
+        return [r.left - w.left + r.width / 2, r.top - w.top + r.height / 2];
+      });
+      if (!pts.length) return;
+      const str = pts.map((p) => p.join(",")).join(" ");
+      base.setAttribute("points", str);
+      fill.setAttribute("points", str);
+
+      // cumulative length of the path at every dot
+      const cum = [0];
+      for (let i = 1; i < pts.length; i++) cum.push(cum[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]));
+      const total = Math.max(1, cum[cum.length - 1]);
+
+      const lineStart = w.top - s.top;
       const scrolled = Math.max(0, -s.top - 12);                         // scroll past the section top (12px dead zone)
-      const range = Math.max(1, lineStart + height - window.innerHeight * 0.75); // scroll needed to fill the whole line
-      const progress = Math.min(1, scrolled / range);
-      const y = still ? height : firstDotCenter + progress * (height - firstDotCenter);
-      wrap.style.setProperty("--fy", `${y}px`);
-      dots.forEach((d) => d.parentElement?.classList.toggle("lit", d.offsetTop + d.offsetHeight / 2 <= y));
+      const range = Math.max(1, lineStart + w.height - window.innerHeight * 0.75);
+      const progress = still ? 1 : Math.min(1, scrolled / range);
+      const dist = progress * total;
+
+      fill.style.strokeDasharray = `${total}`;
+      fill.style.strokeDashoffset = `${total - dist}`;
+
+      // position of the travelling ring
+      let k = 1;
+      while (k < cum.length - 1 && cum[k] < dist) k++;
+      const seg = Math.max(1, cum[k] - cum[k - 1]);
+      const t = pts.length > 1 ? Math.min(1, Math.max(0, (dist - cum[k - 1]) / seg)) : 0;
+      const a = pts[pts.length > 1 ? k - 1 : 0], b = pts[pts.length > 1 ? k : 0];
+      wrap.style.setProperty("--hx", `${a[0] + (b[0] - a[0]) * t}px`);
+      wrap.style.setProperty("--hy", `${a[1] + (b[1] - a[1]) * t}px`);
+
+      dots.forEach((d, i) => d.parentElement?.classList.toggle("lit", cum[i] <= dist + 0.5));
     };
     const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
 
     update();
-    if (!still) {
-      window.addEventListener("scroll", onScroll, { passive: true });
-      window.addEventListener("resize", onScroll);
-    }
+    const ro = new ResizeObserver(onScroll);
+    ro.observe(wrap);
+    window.addEventListener("resize", onScroll);
+    if (!still) window.addEventListener("scroll", onScroll, { passive: true });
     return () => {
+      ro.disconnect();
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
       if (raf) cancelAnimationFrame(raf);
@@ -66,15 +93,20 @@ function Timeline() {
 
   return (
     <div className="jwrap" ref={ref}>
-      <span className="jfill" aria-hidden="true" />
+      <svg className="jsvg" aria-hidden="true">
+        <polyline className="jline" ref={baseRef} />
+        <polyline className="jfill" ref={fillRef} />
+      </svg>
       <span className="jhead" aria-hidden="true" />
       <ol className="journey">
         {JOURNEY.map((j, i) => (
-          <li key={i} className="journey-item">
-            <span className="jdate">{j.date}</span>
+          <li key={i} className={`journey-item ${i % 2 === 0 ? "left" : "right"}`}>
             <span className="jdot" />
             <div className="jcard reveal" style={{ "--d": `${(i % 3) * 0.08}s` } as React.CSSProperties}>
-              <span className="pill">{j.type}</span>
+              <div className="jtop">
+                <span className="pill">{j.type}</span>
+                <span className="jdate">{j.date}</span>
+              </div>
               <div className="jcard-heading">
                 <h3>{j.title}</h3>
                 {j.place && <span className="jplace">{j.place}</span>}

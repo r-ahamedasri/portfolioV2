@@ -20,6 +20,7 @@ const SKILL_CATEGORIES: Category[] = [
   {
     tab: "Software Engineering", icon: "code",
     title: "Software Engineering",
+    description: "Software development, secure coding practices, application architecture, and problem-solving.",
     subs: [
       sub("Programming Languages", "Python 85, Java 75, C 55, C++ 50, JavaScript 70, TypeScript 60"),
       sub("Web Development", "HTML5 85, CSS3 80, JavaScript 70, TypeScript 60, React 70, Node.js 50"),
@@ -32,7 +33,7 @@ const SKILL_CATEGORIES: Category[] = [
   {
     tab: "Pen Testing & Security", icon: "shield",
     title: "Penetration Testing & Cybersecurity",
-    description: "Offensive security, vulnerability assessment, and security testing.",
+    description: "Ethical hacking, vulnerability assessment, penetration testing methodologies, and security analysis.",
     subs: [
       sub("Web Application Security", "Burp Suite 55, OWASP Top 10 65, SQL Injection 60, XSS 60, CSRF 50, Authentication Testing 45"),
       sub("Network Penetration Testing", "Nmap 65, Netcat 50, Port Scanning 70, Service Enumeration 55, Metasploit 45, Network Reconnaissance 55"),
@@ -45,7 +46,7 @@ const SKILL_CATEGORIES: Category[] = [
   {
     tab: "Cloud & Infrastructure", icon: "cloud",
     title: "Cloud & Infrastructure",
-    description: "Cloud computing, infrastructure management, deployment, and system administration.",
+    description: "Cloud computing fundamentals, infrastructure security, system administration, and deployment.",
     subs: [
       sub("Cloud Platforms", "AWS 45, Microsoft Azure 40, Google Cloud 35, IAM 45, Virtual Machines 65, Cloud Storage 50"),
       sub("Containers & Virtualization", "Docker 55, Kubernetes 30, VirtualBox 80, VMware 65, Container Images 50, Virtual Networks 55"),
@@ -58,7 +59,7 @@ const SKILL_CATEGORIES: Category[] = [
   {
     tab: "Networking", icon: "network",
     title: "Networking",
-    description: "Network architecture, communication protocols, troubleshooting, and network defense.",
+    description: "Network protocols, traffic analysis, network configuration, and network security.",
     subs: [
       sub("Networking Fundamentals", "TCP/IP 75, OSI Model 80, IPv4 80, IPv6 55, Subnetting 70, MAC Addresses 75"),
       sub("Network Protocols", "DNS 75, DHCP 70, HTTP/HTTPS 80, SSH 70, FTP/SFTP 60, SMTP 55"),
@@ -134,8 +135,12 @@ function SkillTabs() {
 export function SkillsSection() {
   return (
     <section id="skills">
-      <SectionTitle a="Technical" b="Skills" />
-      <p className="lead reveal">Each bar averages my own self-assessed levels for the technologies listed on the card. They are estimates, not certifications or test results.</p>
+      <div className="skills-head reveal">
+        <SectionTitle a="Technical" b="Skills" r={false} />
+        <p className="skills-note lead">
+          Each bar averages my own self-assessed levels for the technologies listed on the card. They are estimates, not certifications or test results.
+        </p>
+      </div>
       <SkillTabs />
     </section>
   );
