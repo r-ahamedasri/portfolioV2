@@ -6,7 +6,7 @@ const AVAILABILITY = "Available for opportunities";
 const GREETING = "Hi, I'm";
 const NAME = "Ahamed Asri";
 const INTRO =
-  "Computer Science undergraduate at the University of Westminster, passionate about cybersecurity and software development. I build, break, and learn to understand technology and make it better.";
+  "A Computer Science undergraduate focused on cybersecurity, security automation, and secure software development, with hands-on experience building practical tools and exploring AI-driven solutions.";
 const PHOTO = "/profile.WebP"; // transparent PNG in /public
 const RESUME = "/AhamedAsri_Resume.pdf"; // file in /public
 

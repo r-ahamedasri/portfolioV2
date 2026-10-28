@@ -835,7 +835,6 @@ h1.name {
   border-radius: 16px;
   background: var(--surface);
   color: var(--muted);
-  animation: rise 0.5s both;
 }
 
 .strip b {
@@ -889,6 +888,42 @@ h1.name {
 .sktop b {
   font: 600 0.8rem "JetBrains Mono", monospace;
   color: var(--muted);
+}
+
+.wipe {
+  position: relative;
+}
+
+span.wipe {
+  display: inline-block;
+  max-width: 100%;
+}
+
+.sktop h4.wipe {
+  flex: 0 1 auto;
+  align-self: flex-start;
+}
+
+.sktop b.wipe {
+  margin-left: auto;
+}
+
+.wipe .wt {
+  clip-path: inset(0 100% 0 0);
+  animation: wt-wipe 0.9s var(--d, 0s) cubic-bezier(0.25, 0.6, 0.3, 1) forwards;
+}
+
+@keyframes wt-wipe {
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wipe .wt {
+    clip-path: none;
+    animation: none;
+  }
 }
 
 .sktech {

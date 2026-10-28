@@ -1,4 +1,4 @@
-import { useState, type CSSProperties } from "react";
+import { useState, type CSSProperties, type ReactNode } from "react";
 import { SectionTitle } from "./SectionTitle";
 
 // ---- Edit your skills here ----
@@ -99,12 +99,17 @@ const Ico = ({ n, s = 20 }: { n: string; s?: number }) => (
 // A card's percentage is the average of the technology levels listed in the SKILL_CATEGORIES list at the top of this file
 const average = (sub: SubCategory) => Math.round(sub.techs.reduce((sum, t) => sum + t[1], 0) / sub.techs.length);
 
+// Text appears with a block wipe while the surrounding box stays static
+const wd = (d: number) => ({ "--d": `${d}s` } as CSSProperties);
+const Wt = ({ children }: { children: ReactNode }) => <span className="wt">{children}</span>;
+
 const SkillCard = ({ sub, i }: { sub: SubCategory; i: number }) => {
   const level = average(sub);
+  const d = 0.05 + i * 0.04;
   return (
-    <article className="skcard reveal" style={{ "--d": `${i * 0.07}s` } as CSSProperties}>
-      <div className="sktop"><Ico n="check" /><h4>{sub.name}</h4><b>{level}%</b></div>
-      <p className="sktech" title={sub.techs.map((t) => `${t[0]} ${t[1]}%`).join(" · ")}>{sub.techs.map((t) => t[0]).join(" · ")}</p>
+    <article className="skcard">
+      <div className="sktop"><Ico n="check" /><h4 className="wipe" style={wd(d)}><Wt>{sub.name}</Wt></h4><b className="wipe" style={wd(d + 0.05)}><Wt>{level}%</Wt></b></div>
+      <p className="sktech wipe" style={wd(d + 0.1)} title={sub.techs.map((t) => `${t[0]} ${t[1]}%`).join(" · ")}><Wt>{sub.techs.map((t) => t[0]).join(" · ")}</Wt></p>
       <div className="sbar" role="progressbar" aria-label={sub.name} aria-valuenow={level} aria-valuemin={0} aria-valuemax={100}>
         <i style={{ "--w": `${level}%`, "--d": `${0.2 + i * 0.07}s` } as CSSProperties} />
       </div>
@@ -125,7 +130,7 @@ function SkillTabs() {
         ))}
       </div>
       <div id="skpanel" role="tabpanel" key={tab} className="spanel">
-        {c.description && <p className="strip"><b>Focus:</b> {c.description}</p>}
+        {c.description && <p className="strip"><span className="wipe" style={wd(0)}><Wt><b>Focus:</b> {c.description}</Wt></span></p>}
         <div className="sgrid">{c.subs.map((s, i) => <SkillCard key={s.name} sub={s} i={i} />)}</div>
       </div>
     </div>
