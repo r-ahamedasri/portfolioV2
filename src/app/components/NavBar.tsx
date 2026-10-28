@@ -3,7 +3,7 @@ import { flushSync } from "react-dom";
 import { Icon } from "./Icon";
 
 // ---- Edit the nav links here (id must match the section id) ----
-const LOGO = "RAA";
+const LOGO = "AA";
 const NAV_SECTIONS = [
   { id: "about", label: "About" },
   { id: "skills", label: "Skills" },

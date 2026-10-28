@@ -1,7 +1,7 @@
 import { SocialLinks } from "./SocialLinks";
 
 // ---- Edit your footer here (social links are in SocialLinks.tsx) ----
-const LOGO = "RAA";
+const LOGO = "AA";
 const NAME = "Ahamed Asri";
 
 export function Footer() {
