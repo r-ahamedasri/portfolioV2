@@ -541,6 +541,11 @@ section:not(#home) {
   max-width: 640px;
 }
 
+.hero-text .lead {
+  text-align: justify;
+  text-justify: inter-word;
+}
+
 .hero-text>* {
   animation: rise 0.9s both;
 }
@@ -1789,6 +1794,8 @@ h1.name {
 .about-body p {
   font-size: 1.08rem;
   margin-bottom: 1rem;
+  text-align: justify;
+  text-justify: inter-word;
 }
 
 .about-photo {
@@ -1887,6 +1894,8 @@ h1.name {
 .fact p {
   margin: 0;
   font-size: 0.95rem;
+  text-align: justify;
+  text-justify: inter-word;
 }
 
 .fact ul {
